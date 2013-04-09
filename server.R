@@ -31,7 +31,7 @@ shinyServer(function(input, output, clientData) {
     cd <- names(clientData)
     cd2 <- t(ldply(cd, function(i) clientData[[i]]))
     names(cd2) <- cd
-    cd2 <- data.frame(id=input$id, final=input$submit, weight=input$weight, time=Sys.time(), cd2)
+    cd2 <- data.frame(id=input$id, userprint=input$user, final=input$submit, weight=input$weight, time=Sys.time(), cd2)
     write.table(cd2, file="results.txt", quote=FALSE, sep=",", row.names=FALSE, append=TRUE)
     
     print(p1)
@@ -60,8 +60,10 @@ shinyServer(function(input, output, clientData) {
       dframeAdj1 <- adjNone(dframe, f, fprime, f2prime)
       title = "Correction: None"
     }
-    limits <- range(c(subset(dframeAdj1, type=="Adjustment")$seg.ystart, subset(dframeAdj, type=="Adjustment")$seg.ystart, 
-                      subset(dframeAdj1, type=="Adjustment")$seg.yend, subset(dframeAdj, type=="Adjustment")$seg.yend))
+    limits <- range(c(subset(dframeAdj1, type=="Adjustment")$seg.ystart, 
+                      subset(dframeAdj, type=="Adjustment")$seg.ystart, 
+                      subset(dframeAdj1, type=="Adjustment")$seg.yend, 
+                      subset(dframeAdj, type=="Adjustment")$seg.yend))
     if(corr==1) { 
       dplot <- dframeAdj
     } else{
