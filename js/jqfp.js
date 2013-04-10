@@ -76,38 +76,4 @@
     return _md5();
   }
 
-
-  $(document).on("load", "text.getFingerprint", function(evt) {
-  
-    // evt.target is the button that was clicked
-    var el = $(evt.target);
-  
-    // Set the button's text to the user's hash.
-    el.value($.fingerprint());
-    el.defaultValue($.fingerprint());
-    el.text($.fingerprint());
-  
-    // Raise an event to signal that the value changed
-    el.trigger("change");
-  });
-
-  var userprint = new Shiny.InputBinding();
-  $.extend(userprint, {
-    find: function(scope) {
-      return $(scope).find(".getFingerprint");
-    },
-    getValue: function(el) {
-      return String($(el).text());
-    },
-    subscribe: function(el, callback) {
-    $(el).on("change.userprint", function(e) {
-      callback();
-    });
-    },
-    unsubscribe: function(el) {
-      $(el).off(".userprint");
-    }
-    }
-  });
-  Shiny.inputBindings.register(userprint);
 })(jQuery);
