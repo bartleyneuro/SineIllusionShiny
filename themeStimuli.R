@@ -1,4 +1,4 @@
-
+ 
 theme_stimuli <- function(base_size = 12, base_family = ""){
   theme_grey(base_size = base_size, base_family = base_family) +
     theme(legend.background = element_blank(), 

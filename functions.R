@@ -1,5 +1,5 @@
 library(gridExtra)
-library(plyr)
+library(plyr) 
 library(reshape2)
 source("./themeStimuli.R")
 createSine <- function(n=200, len=1, f=f, fprime=fprime, f2prime=f2prime, a=0, b=2*pi) {
