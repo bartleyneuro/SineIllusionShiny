@@ -14,3 +14,47 @@ id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
 ,,0,0,2013-04-09 12:24:53,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
 id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
 ,,0,0,2013-04-09 12:25:04,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:51:55,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:52:01,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:52:42,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:52:46,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:54:14,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:54:18,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:58:03,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:58:21,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:58:26,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 15:59:55,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 16:00:00,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,1,0,2013-04-09 16:00:36,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 16:04:05,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 16:04:10,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 18:04:55,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0.225,2013-04-09 18:04:59,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0.225,2013-04-09 18:05:03,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 18:06:05,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 18:06:08,TRUE,400,FALSE,961,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,,0,0,2013-04-09 18:23:04,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,<!--Test compter fingerprint function.--><html><head><script type="text/javascript" src="js/jquery.js"></script><script type="text/javascript" src="js/jqfp.js"></script><script type="text/javascript" src="js/md5.js"></script><title>Fingerprint Test</title></head><body>    ID:    <script> document.write($.fingerprint());</script></body></html>,0,0,2013-04-09 18:46:48,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,
+id,userprint,final,weight,time,X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11
+,<head>  <script src="js/jqfp.js"></script></head><head>  <script src="js/jquery.js"></script></head><head>  <script src="js/md5.js"></script></head>,0,0,2013-04-09 19:05:30,TRUE,400,FALSE,972,1,,localhost,/,8100,http:,

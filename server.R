@@ -31,10 +31,13 @@ shinyServer(function(input, output, clientData) {
     cd <- names(clientData)
     cd2 <- t(ldply(cd, function(i) clientData[[i]]))
     names(cd2) <- cd
-    cd2 <- data.frame(id=input$id, userprint=input$user, final=input$submit, weight=input$weight, time=Sys.time(), cd2)
-    write.table(cd2, file="results.txt", quote=FALSE, sep=",", row.names=FALSE, append=TRUE)
+#     cd2 <- data.frame(id=input$id, userprint=input$user, final=input$submit, weight=input$weight, time=Sys.time(), cd2)
+#     write.table(cd2, file="results.txt", quote=FALSE, sep=",", row.names=FALSE, append=TRUE)
     
     print(p1)
+  })
+  output$idtext <- renderPrint({
+    print(input$finger)
   })
   
   output$ycorrect <- renderPlot({
