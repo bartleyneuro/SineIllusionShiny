@@ -8,6 +8,7 @@ getID <- function(inputId) {
 #     singleton(tags$head(tags$script(src = "js/jquery.js", type='text/javascript'))),
     singleton(tags$head(tags$script(src = "js/md5.js", type='text/javascript'))),
     singleton(tags$head(tags$script(src = "js/shinyBindings.js", type='text/javascript'))),
+    tags$body(onload="setuid()"),
     tags$input(id = inputId, class = "userid", value="init"),
     tags$style(type='text/css', ".userid { display:none; }")
   )
