@@ -75,4 +75,5 @@
     // right away, without the need for any other calls.
     return _md5();
   }
+
 })(jQuery);
