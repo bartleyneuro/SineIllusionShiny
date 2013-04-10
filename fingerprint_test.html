@@ -6,11 +6,19 @@ Test compter fingerprint function.
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jqfp.js"></script>
 <script type="text/javascript" src="js/md5.js"></script>
+<script type="text/javascript">
+    var uid=$.fingerprint();
+
+    function setuid() {
+        document.exform.uidhidden.value=uid;
+    }
+</script>
 <title>Fingerprint Test</title>
 </head>
 
-<body>
-    You're browser fingerprint is:
-    <script> document.write($.fingerprint());</script>
+<body onload="setuid()">
+    <form name="exform" method="GET">
+        <input type="hidden" name="uidhidden" />
+    </form>
 </body>
 </html>
