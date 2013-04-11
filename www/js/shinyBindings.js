@@ -53,13 +53,7 @@
     return _md5();
   }
 
-  var uid=$.fingerprint();
   
-  function setuid() {
-    el = $.find('.userid')
-    $(el).value = $.fingerprint();
-    $(el).trigger("change");
-  }
   
   var uidOutputBinding = new Shiny.OutputBinding();
   $.extend(uidOutputBinding, {
@@ -99,5 +93,23 @@
   });
   Shiny.inputBindings.register(uidInputBinding);
   
-  setuid();
+  //setuid();
 })()
+
+//A unique ID generated from the fingerprint of
+// several browser characteristics.
+shiny_uid=$.fingerprint();
+
+/*
+ * Set the uid fingerprint into the DOM elements that need to know about it.
+ * Do not call before the form loads, or the selectors won't find anything.
+ */
+function setuid() {
+  var el = $('#id');
+  var fph = $('#finger');
+
+  el.val(shiny_uid);
+  fph.val(shiny_uid);
+  el.trigger("change");
+  fph.trigger("change");
+}
