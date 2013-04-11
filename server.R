@@ -27,7 +27,7 @@ shinyServer(function(input, output, clientData) {
 #     dframe.all$type <- factor(dframe.all$type, levels=c("Control", "Adjusted"))
     dframe.all <- dframeAdj
     p1 <- qplot(x=xstart, xend=xend, y=ystart, yend=yend, geom="segment", data=dframe.all) + coord_equal(ratio=1) +
-      theme_stimuli() # + facet_wrap(~type)
+      theme_stimuli() + xlim(c(-pi, pi)) # + facet_wrap(~type)
     
     cd <- names(clientData)
     cd2 <- t(ldply(cd, function(i) clientData[[i]]))
