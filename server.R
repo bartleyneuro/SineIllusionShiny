@@ -40,10 +40,6 @@ shinyServer(function(input, output, clientData) {
   
   write.csv(userResults, "results.csv", row.names=FALSE)
   
-  output$idtext <- renderPrint({
-    print(paste(input$ipid, "\n", input$finger))
-  })
-  
   output$ycorrect <- renderPlot({
     f <- function(x) input$amp*sin(x)
     fprime <- function(x) input$amp*cos(x)

@@ -25,14 +25,13 @@ shinyUI(pageWithSidebar(
   headerPanel("Graphical Cognition"),
   
   sidebarPanel(
-    sliderInput("weight", "", min=0, max=1, value=0, step=.075), br(),br(),
+    sliderInput("weight", "", min=0, max=1, value=runif(1), step=.05), br(),br(),
     textInput("id", "ID"),br(),br(),
     actionButton("submit", label="Next Question"),
     inputUserid("finger"),br(),
     inputIp("ipid")
   ),
   mainPanel(
-#    textOutput("idtext"),
     plotOutput("illusion", width="auto")
   )
 ))
