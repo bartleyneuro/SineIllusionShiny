@@ -19,6 +19,9 @@ shinyServer(function(input, output, clientData) {
     fprime <- function(x) 2*cos(x)
     f2prime <- function(x) -2*sin(x)
     dframe <- createSine(n=40+2, len=1, f, fprime, f2prime, a=-pi, b=pi)[c(2:(41)),]
+    
+    trials <- expand.grid(w=c(0, .5, 1), type=c("x", "y"))
+    
     minor.axis.correction <- correctx(seq(-pi, pi, pi/8), fprime, w=input$weight)
     dframeAdj <- cbind(adjx(dframe, fprime=fprime, w=input$weight), adj=paste("X corrected, weight =", input$weight))
 #     dframe$type <- "Control"

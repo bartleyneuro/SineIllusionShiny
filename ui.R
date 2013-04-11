@@ -19,6 +19,18 @@ inputIp <- function(inputId, value=''){
     tags$input(id = inputId, class = "ipaddr", value=as.character(value), type="text", style="display:none;")
   )
 }
+
+incrementButton <- function(inputId, label='A', value = 0) {
+  tagList(
+    singleton(tags$head(tags$script(src = "js/increment.js"))),
+    tags$button(id = inputId,
+                class = "increment btn",
+                type = "button",
+#                 text = label, 
+                as.character(value))
+  )
+}
+
 # Define UI for application that plots random distributions 
 shinyUI(pageWithSidebar(
   # Application title
@@ -27,8 +39,8 @@ shinyUI(pageWithSidebar(
   sidebarPanel(
     sliderInput("weight", "", min=0, max=1, value=runif(1), step=.05), br(),br(),
     textInput("id", "ID"),br(),br(),
-    actionButton("submit", label="Next Question"),
-    inputUserid("finger"),br(),
+    incrementButton("submit", "Next Question"), br(),
+    inputUserid("finger"),
     inputIp("ipid")
   ),
   mainPanel(
