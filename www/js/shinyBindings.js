@@ -1,5 +1,4 @@
 
-(function(){
   // Calling `jQuery.fingerprint()` will return an MD5 hash, i.e. said
   // fingerprint.
 
@@ -54,9 +53,9 @@
   }
 
   
-  
-  var uidOutputBinding = new Shiny.OutputBinding();
-  $.extend(uidOutputBinding, {
+  /*
+  var outputUserid = new Shiny.OutputBinding();
+  $.extend(outputUserid, {
     find: function(scope) {
       return $.find('.userid');
     },
@@ -69,47 +68,98 @@
       
     }
   });
-  Shiny.outputBindings.register(uidOutputBinding);
+  Shiny.outputBindings.register(outputUserid);
+  */
   
-  var uidInputBinding = new Shiny.InputBinding();
-  $.extend(uidInputBinding, {
+  var inputUseridBinding = new Shiny.InputBinding();
+  $.extend(inputUseridBinding, {
     find: function(scope) {
       return $.find('.userid');
     },
     getValue: function(el) {
-      return $(el).value;
+      return $(el).val();
     },
     setValue: function(el, values) {
-      $(el).value = $.fingerprint();
+      $(el).attr("value", $.fingerprint());
+      $(el).trigger("change");
     },
     subscribe: function(el, callback) {
-      $(el).on("change.uidInputBinding", function(e) {
+      $(el).on("change.inputUseridBinding", function(e) {
         callback();
       });
     },
     unsubscribe: function(el) {
-      $(el).off(".uidInputBinding");
+      $(el).off(".inputUseridBinding");
     }
   });
-  Shiny.inputBindings.register(uidInputBinding);
+  Shiny.inputBindings.register(inputUseridBinding);
   
   //setuid();
-})()
 
 //A unique ID generated from the fingerprint of
 // several browser characteristics.
 shiny_uid=$.fingerprint();
+
 
 /*
  * Set the uid fingerprint into the DOM elements that need to know about it.
  * Do not call before the form loads, or the selectors won't find anything.
  */
 function setuid() {
-  var el = $('#id');
-  var fph = $('#finger');
-
-  el.val(shiny_uid);
-  fph.val(shiny_uid);
-  el.trigger("change");
+  var fph = $('.userid');
+  fph.attr("value", shiny_uid);
   fph.trigger("change");
 }
+
+function setvalues(){
+  getip();
+  setuid();
+}
+/*
+ * Set the uid fingerprint into the DOM elements that need to know about it.
+ * Do not call before the form loads, or the selectors won't find anything.
+ */
+
+var inputIpBinding = new Shiny.InputBinding();
+$.extend(inputIpBinding, {
+  find: function(scope) {
+    return $.find('.ipaddr');
+  },
+  getValue: function(el) {
+    return $(el).val();
+  },
+  setValue: function(el, values) {
+    $(el).attr("value", getip())
+    $(el).trigger("change");
+  },
+  subscribe: function(el, callback) {
+    $(el).on("change.inputIpBinding", function(e) {
+      callback();
+    });
+  },
+  unsubscribe: function(el) {
+    $(el).off(".inputIpBinding");
+  }
+});
+Shiny.inputBindings.register(inputIpBinding);
+
+
+function getip() {
+ip = null;
+$.getJSON("http://jsonip.appspot.com?callback=?",
+  function(data){
+       ip = data.ip;
+       callback(ip);
+       $(".ipaddr").attr("value", ip);
+       $(".ipaddr").trigger("change");
+ //return ip address correctly
+  });
+//alert(ip); //undefined or null
+}
+
+function callback(tempip)
+{
+ip=tempip;
+// alert(ip); //undefined or null
+}
+

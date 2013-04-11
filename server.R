@@ -12,6 +12,7 @@ source("./functions.R")
 shinyServer(function(input, output, clientData) {
   suppressMessages(library(ggplot2))
   
+  userResults <- data.frame()
   
   output$illusion <- renderPlot({
     f <- function(x) 2*sin(x)
@@ -31,13 +32,16 @@ shinyServer(function(input, output, clientData) {
     cd <- names(clientData)
     cd2 <- t(ldply(cd, function(i) clientData[[i]]))
     names(cd2) <- cd
-#     cd2 <- data.frame(id=input$id, userprint=input$user, final=input$submit, weight=input$weight, time=Sys.time(), cd2)
-#     write.table(cd2, file="results.txt", quote=FALSE, sep=",", row.names=FALSE, append=TRUE)
-    
+    cd2 <- data.frame(id=input$id, final=input$submit, weight=input$weight,
+                      ipid=input$ipid, md5=input$finger, time=Sys.time(), cd2)
+    userResults <- rbind.fill(userResults, cd2)
     print(p1)
   })
+  
+  write.csv(userResults, "results.csv", row.names=FALSE)
+  
   output$idtext <- renderPrint({
-    print(input$finger)
+    print(paste(input$ipid, "\n", input$finger))
   })
   
   output$ycorrect <- renderPlot({
