@@ -20,30 +20,39 @@ inputIp <- function(inputId, value=''){
   )
 }
 
-incrementButton <- function(inputId, label='A', value = 0) {
+incrementButton <- function(inputId, prelabel="", postlabel="", value = 1) {
   tagList(
     singleton(tags$head(tags$script(src = "js/increment.js"))),
-    tags$button(id = inputId,
-                class = "increment btn",
-                type = "button",
-#                 text = label, 
-                as.character(value))
+    tags$table(id="incrementbutton",
+               tags$tr(tags$td(prelabel), 
+                       tags$td(tags$button(id = inputId,
+                                           class = "increment btn",
+                                           type = "button",
+                                           as.character(value))),
+                       tags$td(postlabel)))
   )
 }
-
+source("./inputSpinner.R")
 # Define UI for application that plots random distributions 
 shinyUI(pageWithSidebar(
   # Application title
   headerPanel("Graphical Cognition"),
   
   sidebarPanel(
-    sliderInput("weight", "", min=0, max=1, value=runif(1), step=.05), br(),br(),
-    textInput("id", "ID"),br(),br(),
-    incrementButton("submit", "Next Question"), br(),
-    inputUserid("finger"),
-    inputIp("ipid")
+    textInput("id", "ID"), 
+    br(), 
+    br(),
+    uiOutput("weightControl"),
+    br(), 
+    br(),
+#     incrementButton("trial", "Question", "of 3"),
+    actionButton("q", "Next Question"),
+    textOutput("questionCounter"),
+    inputIp("ipid"),
+    inputUserid("finger")
   ),
   mainPanel(
+#     textOutput("testtext"),
     plotOutput("illusion", width="auto")
   )
 ))
