@@ -146,7 +146,7 @@ Shiny.inputBindings.register(inputIpBinding);
 
 function getip() {
 ip = null;
-$.getJSON("http://jsonip.appspot.com?callback=?",
+$.getJSON("http://jsonip.com?callback=?",
   function(data){
        ip = data.ip;
        callback(ip);
