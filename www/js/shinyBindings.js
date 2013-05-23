@@ -18,7 +18,7 @@
     function _raw() {
       // That string is the return value.
       return [
-        navigator.userAgent,
+        navigator.userAgent,getip(),
         [ screen.height, screen.width, screen.colorDepth ].join("x"),
         ( new Date() ).getTimezoneOffset(),
         !!window.sessionStorage,
