@@ -10,6 +10,7 @@ source("./inputSpinner.R")
 #' Look at https://groups.google.com/forum/?fromgroups=#!topic/shiny-discuss/THb1Ql5E20s for shiny server user-level data collection
 
 shinyServer(function(input, output, clientData) {
+
   suppressMessages(library(ggplot2))
 
   wopts <- seq(0.05, .8, .05)
@@ -44,10 +45,12 @@ shinyServer(function(input, output, clientData) {
     inames <- names(input)
     ivals <- t(ldply(inames, function(i) input[[i]]))
     names(ivals) <- inames
-    cd2 <- data.frame(cbind(cd2, ivals))
+    cd2 <- data.frame(cbind(cd2, ivals), stringsAsFactors=FALSE)
     names(cd2) <- c(cd, inames)
+    cd2$ipid <- paste(strsplit(cd2$ipid, ".", fixed=TRUE)[[1]][1:3], collapse=".") 
+    # censor last 2 ip values for privacy 
     cd2$time <- Sys.time()
-    
+
     cd2 <- cd2[,order(names(cd2))]
     
     
@@ -59,15 +62,6 @@ shinyServer(function(input, output, clientData) {
   })
 
   writeResults <- reactive({
-      
-#       if("results.csv"%in%list.files())  {
-#         userResults <- read.csv("results.csv", stringsAsFactors=FALSE)
-#         userResults <- rbind.fill(userResults, cd2)
-#       } else {
-#         userResults <- cd2
-#       }
-#           
-#       write.csv(userResults, "results.csv", row.names=FALSE)
       write.csv(cd2, "results.csv", row.names=FALSE, append=TRUE)
     })
   
