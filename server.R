@@ -7,7 +7,8 @@ library(shinyIncubator)
 
 source("./functions.R")
 source("./inputSpinner.R")
-#' Look at https://groups.google.com/forum/?fromgroups=#!topic/shiny-discuss/THb1Ql5E20s for shiny server user-level data collection
+#' Look at https://groups.google.com/forum/?fromgroups=#!topic/shiny-discuss/THb1Ql5E20s 
+#' for shiny server user-level data collection
 
 shinyServer(function(input, output, clientData) {
 
@@ -22,7 +23,6 @@ shinyServer(function(input, output, clientData) {
   maxtrials <- nrow(trials)
   
   output$illusion <- renderPlot({
-    
     f <- function(x) 2*sin(x)
     fprime <- function(x) 2*cos(x)
     f2prime <- function(x) -2*sin(x)
@@ -30,7 +30,7 @@ shinyServer(function(input, output, clientData) {
     
     dframe <- createSine(n=40+2, len=1, f, fprime, f2prime, a=-pi, b=pi)[c(2:(41)),]
     dframe.all <- dframe
-    q <- input$q %% maxtrials + 1
+    q <- (input$q+input$skip) %% maxtrials + 1
     if(trials$type[q]=="x"){
       dframeAdj <- cbind(adjx(dframe, fprime=fprime, w=w), adj=paste("X corrected, weight =", w))
       dframe.all <- dframeAdj
@@ -48,7 +48,7 @@ shinyServer(function(input, output, clientData) {
     cd2 <- data.frame(cbind(cd2, ivals), stringsAsFactors=FALSE)
     names(cd2) <- c(cd, inames)
     cd2$ipid <- paste(strsplit(cd2$ipid, ".", fixed=TRUE)[[1]][1:3], collapse=".") 
-    # censor last 2 ip values for privacy 
+    # censor last 3 digits of ip value for privacy - 1st 9 allow city-level resolution.
     cd2$time <- Sys.time()
 
     cd2 <- cd2[,order(names(cd2))]
@@ -69,10 +69,16 @@ shinyServer(function(input, output, clientData) {
     paste(sapply(names(input), function(i) paste(i, "=", input[[i]], sep=" ")), collapse="\n")
   })
   
-  output$questionCounter <- renderText({
-    if(input$q>=reqtrials) paste("Question ", input$q+1, " (", reqtrials," required).", sep="") else
-      paste("Question ", input$q+1 , " of ", reqtrials," required.\n", reqtrials - 1 - input$q, " remaining.", sep="")
+  output$questionCounter1 <- renderText({
+    paste("Questions Answered: ", input$q, " (", reqtrials, " required for payment)", sep="")
   })
+  
+  output$questionCounter2 <- renderText({
+    act.trials <- input$skip + input$q
+    
+    paste("Questions Skipped: ", input$skip, " of ", act.trials, " attempted", sep="")
+  })
+
   
   output$weightControl <- renderUI({
     q <- input$q %% maxtrials + 1

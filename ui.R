@@ -44,12 +44,12 @@ shinyUI(pageWithSidebar(
     br(),
     uiOutput("weightControl"),
     br(), 
-    br(),
-#     incrementButton("trial", "Question", "of 3"),
-    actionButton("q", "Next Question"),
-    textOutput("questionCounter"),
+    actionButton("q", "Next Question"),br(),br(),
+    textOutput("questionCounter1"),br(),
+    textOutput("questionCounter2"),br(),
     inputIp("ipid"),
-    inputUserid("finger")
+    inputUserid("finger"),
+    actionButton("skip", "Skip Question")
   ),
   mainPanel(
 #     textOutput("testtext"),
