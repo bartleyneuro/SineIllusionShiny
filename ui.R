@@ -39,7 +39,7 @@ shinyUI(pageWithSidebar(
   headerPanel("Graphical Cognition"),
   
   sidebarPanel(
-    textInput("id", "ID"), 
+    textInput("userid", "ID"), 
     br(), 
     br(),
     uiOutput("weightControl"),
@@ -48,11 +48,12 @@ shinyUI(pageWithSidebar(
     textOutput("questionCounter1"),br(),
     textOutput("questionCounter2"),br(),
     inputIp("ipid"),
-    inputUserid("finger"),
+    inputUserid("fingerprint"),
     actionButton("skip", "Skip Question")
   ),
   mainPanel(
 #     textOutput("testtext"),
-    plotOutput("illusion", width="auto")
+    plotOutput("illusion", width="auto"),
+    textOutput("data")
   )
 ))

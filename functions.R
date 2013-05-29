@@ -1,4 +1,4 @@
-library(gridExtra)
+# library(gridExtra)
 library(plyr) 
 library(reshape2)
 source("./themeStimuli.R")
@@ -65,3 +65,24 @@ adjLinear <- function(df, f=f, fprime=fprime, f2prime=f2prime, w=1){
   
   df
 }
+
+getData.wtype <- function(w, type){
+  f <- function(x) 2*sin(x)
+  fprime <- function(x) 2*cos(x)
+  f2prime <- function(x) -2*sin(x)
+  
+  dframe <- createSine(n=40+2, len=1, f, fprime, f2prime, a=-pi, b=pi)[c(2:(41)),]
+  dframe.all <- dframe
+  
+  if(type=="x"){
+    dframeAdj <- cbind(adjx(dframe, fprime=fprime, w=w), adj=paste("X corrected, weight =", w))
+    dframe.all <- dframeAdj
+  } else {
+    dframeAdj <- cbind(adjLinear(dframe, f, fprime, f2prime, w=w), adj=paste("Y corrected, weight =", w))
+    dframe.all <- dframeAdj
+  }
+  dframe.all$w <- w
+  dframe.all$type <- type
+  return(dframe.all)
+}
+
