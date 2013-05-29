@@ -1,0 +1,1 @@
+rsync -avz  --progress --partial  --ipv4 ./* srvanderplas@glimmer.rstudio.com:~/ShinyApps/SineIllusionShiny/
