@@ -4,6 +4,7 @@ library(reshape2)
 library(plyr)
 library(shinyIncubator)
 library(RMySQL)
+library(digest)
 
 source("./functions.R")
 source("./inputSpinner.R")
@@ -59,7 +60,7 @@ shinyServer(function(input, output, clientData) {
     print(p1)
   })
 
-  output$testtext <- renderText(results())
+  output$testtext <- renderText(paste("fingerprint: ", input$fingerprint, "     ip: ", input$ipid))
   
   output$data <- renderPrint({
     invisible({
@@ -74,16 +75,18 @@ shinyServer(function(input, output, clientData) {
     iptemp[is.na(iptemp)] <- 0
     cd2$ipid <- paste(iptemp[1:3], collapse=".") 
     # censor last 3 digits of ip value for privacy - 1st 9 allow city-level resolution.
+    cd2$iphash <- digest(input$ipid)
+    # also hash full IP address 
     cd2 <- as.data.frame(cd2, stringsAsFactors=FALSE)
     cd2$time <- as.POSIXct(Sys.time())
     if(!"weight"%in%names(cd2)) cd2$weight <- NA
+    
+    # only write to db if there is certain identifying information.
     if(cd2$ipid !="NA.NA.NA" & !is.na(cd2$weight) & cd2$fingerprint!=""){
-      # only write to db if there is certain identifying information.
-      con <- dbConnect(MySQL(), user="skoons", password="sKOONsstat1t",dbname="skoons", host="mysql2.stat.iastate.edu")
-      #     save(cd2, file="df.Rdata")
-      cd2 <- cd2[,c("allowDataUriScheme", "fingerprint", "userid", "ipid", "output_illusion_height", "output_illusion_width", "pixelratio", "q", "skip", "time", "url_hostname", "url_pathname", "url_port", "url_protocol", "url_search", "weight")]
-#       message(paste(names(cd2), cd2, sep=" = ", collapse=", "))
-      
+
+      con <- dbConnect(MySQL(), group="stat")
+      cd2 <- cd2[,c("allowDataUriScheme", "fingerprint", "userid", "ipid", "output_illusion_height", "output_illusion_width", "pixelratio", "q", "skip", "time", "url_hostname", "url_pathname", "url_port", "url_protocol", "url_search", "weight", "iphash")]
+#       save(cd2, file="df.Rdata")
       dbWriteTable(con, name="SineIllusionShiny", value=cd2, append=TRUE, row.names=FALSE)
       dbDisconnect(con)
     }
@@ -92,7 +95,7 @@ shinyServer(function(input, output, clientData) {
   })
   
   output$questionCounter1 <- renderText({
-    paste("Questions Answered: ", input$q, " (", reqtrials, " required for payment)", sep="")
+    paste("Questions Answered: ", input$q, sep="")
   })
   
   output$questionCounter2 <- renderText({

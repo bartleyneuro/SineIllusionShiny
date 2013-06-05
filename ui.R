@@ -40,9 +40,10 @@ shinyUI(pageWithSidebar(
   
   sidebarPanel(
     textInput("userid", "ID"), 
+    helpText("Note: To be reimbursed through Amazon Mechanical Turk, you must input your Amazon Worker ID"),
     br(), 
-    br(),
     uiOutput("weightControl"),
+    helpText("Adjust the value until you feel the lines are approximately even. When you are satisfied, press the 'Next Question' button."),
     br(), 
     actionButton("q", "Next Question"),br(),br(),
     textOutput("questionCounter1"),br(),

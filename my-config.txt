@@ -1,8 +1,0 @@
-# this is a comment
-; this is also a comment
-[group]
-user = skoons
-database = skoons
-password = sKOONsstat1t
-host = mysql2.stat.iastate.edu
-port = 3306
