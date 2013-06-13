@@ -98,13 +98,14 @@ shinyServer(function(input, output, session) {
     # also hash full IP address 
     cd2 <- as.data.frame(cd2, stringsAsFactors=FALSE)
     cd2$time <- as.POSIXct(Sys.time())
+    cd2$type <- trials$type[q()]
     if(!"weight"%in%names(cd2)) cd2$weight <- NA
     
     # only write to db if there is certain identifying information.
     if(cd2$ipid !="NA.NA.NA" & !is.na(cd2$weight) & cd2$fingerprint!=""){
 
       con <- dbConnect(MySQL(), group="stat")
-      cd2 <- cd2[,c("allowDataUriScheme", "fingerprint", "userid", "ipid", "output_illusion_height", "output_illusion_width", "pixelratio", "q", "skip", "time", "url_hostname", "url_pathname", "url_port", "url_protocol", "url_search", "weight", "iphash")]
+      cd2 <- cd2[,c("allowDataUriScheme", "fingerprint", "userid", "ipid", "output_illusion_height", "output_illusion_width", "pixelratio", "q", "skip", "time", "url_hostname", "url_pathname", "url_port", "url_protocol", "url_search", "weight", "iphash", "type")]
 #       save(cd2, file="df.Rdata")
       dbWriteTable(con, name="SineIllusionShiny", value=cd2, append=TRUE, row.names=FALSE)
       dbDisconnect(con)
