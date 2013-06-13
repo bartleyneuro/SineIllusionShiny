@@ -2,7 +2,7 @@ library(shiny)
 library(ggplot2)
 library(reshape2)
 library(plyr)
-library(shinyIncubator)
+# library(shinyIncubator)
 library(RMySQL)
 library(digest)
 
@@ -11,61 +11,80 @@ source("./inputSpinner.R")
 #' Look at https://groups.google.com/forum/?fromgroups=#!topic/shiny-discuss/THb1Ql5E20s 
 #' for shiny server user-level data collection
 
-shinyServer(function(input, output, clientData) {
+shinyServer(function(input, output, session) {
 
   suppressMessages(library(ggplot2))
 
-  wopts <- seq(0, 1, .05)
+  diffs <- c(0, .5, .5, .5, .5, .25, .25, .25, .25, .25, .25, .25, .25, .1, .1, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .1, .1, .1, .1, .1, .25, .25, .25, .25, .25, .25, .5, .5, .5, .5)
+  wopts <- -4 +cumsum(diffs)
   
   # make list of all combinations of w, type, with corresponding index to reference list of dataframes.
-  dframelist <- expand.grid(w=wopts, type=c("x", "y"), stringsAsFactors=FALSE)
+  dframelist <- expand.grid(z=1:length(wopts), type=c("x", "y"), stringsAsFactors=FALSE)
   dframelist$idx <- 1:nrow(dframelist)
+  dframelist$w <- wopts[dframelist$z]
   
   reqtrials <- 6
-  trialsreq <- expand.grid(w=c(1, sample(6:16, 1), 21), type=c("x", "y"))
+  trialsreq <- expand.grid(z=c(13, sample(16:26, 1), 31), type=c("x", "y"))
   # sample the middle weight option, then 0, 1. Combine with each combination of x, y.
   trialsreq <- trialsreq[sample(1:reqtrials, reqtrials),] # shuffle
   
-  trialsextra <- expand.grid(w=1:21, type=c("x", "y"))
-  trialsextra <- trialsextra[sample(1:(2*length(wopts)), 2*length(wopts)),]
+  trialsextra <- expand.grid(z=13:31, type=c("x", "y"))
+  trialsextra <- trialsextra[sample(1:(length(trialsextra$z)), length(trialsextra$z)),]
   # leave repeats in to get a measure of reliability
   trials <- rbind(trialsreq, trialsextra)
   trials$order <- 1:nrow(trials)
-  trials$w <- wopts[trials$w]
+  trials$w <- wopts[trials$z]
   trials$w <- ceiling(trials$w/.05)*.05
   trials <- merge(trials, dframelist)
-  trials <- trials[order(trials$order),-3]
+  trials <- trials[order(trials$order),-4]
   
   maxtrials <- nrow(trials)
   
   dframe <- do.call("rbind", lapply(dframelist$idx, function(i) getData.wtype(dframelist$w[i], dframelist$type[i])))
   dframe <- merge(dframe, dframelist, sort=FALSE)
-  
+
   q <- reactive((input$q+input$skip) %% maxtrials + 1)
+  wt <- reactive({
+            if(length(input$weight)<1){
+              return(wopts[trials$z[q()]])
+            } else {
+              return(wopts[as.numeric(input$weight)])
+            }  
+          })
   
-  
-  output$weightControl <- renderUI({
-    inputSpinner("weight", value=trials$w[q()])
+  observe({
+    (input$q+input$skip+input$reset) # make the observe() function depend on those values
+    isolate({
+      output$weightControl <- renderUI({
+        inputSpinner("weight", value=trials$z[q()])
+      })
+    })
   })
-  
+
   
   output$illusion <- renderPlot({
-    
-    if(length(input$weight)<1) wt <- 0 else wt <- ceiling(as.numeric(input$weight)/.05)*.05
 
-    dframe.all <- subset(dframe, type==trials$type[q()] & w==wt)
-
-    p1 <- qplot(x=xstart, xend=xend, y=ystart, yend=yend, geom="segment", data=dframe.all) + coord_equal(ratio=1) +
+    dframe.all <- subset(dframe, type==trials$type[q()] & w==wt())
+    p1 <- qplot(x=xstart, xend=xend, y=ystart, yend=yend, geom="segment", data=dframe.all) + 
+      coord_equal(ratio=1) +
       theme_stimuli() + xlim(c(-pi, pi))  
+    
     print(p1)
   })
 
-  output$testtext <- renderText(paste("fingerprint: ", input$fingerprint, "     ip: ", input$ipid))
+  output$testtext <- renderText(paste("weight: ", wt(), 
+                                      "     reset: ", input$reset,
+                                      "     q: ", input$q,
+                                      "     skip: ", input$skip
+#                                       "     fingerprint: ", input$fingerprint, 
+#                                       "     ip: ", input$ipid)
+                                ))
   
+
   output$data <- renderPrint({
     invisible({
 
-    cd <- reactiveValuesToList(clientData)
+    cd <- reactiveValuesToList(session$clientData)
     cd1 <- reactiveValuesToList(input)
     both <- list(cd, cd1)
     n <- unique(unlist(lapply(both, names)))
@@ -104,6 +123,13 @@ shinyServer(function(input, output, clientData) {
     paste("Questions Skipped: ", input$skip, " of ", act.trials, " attempted", sep="")
   })
 
+  output$getsPaid <- renderText({
+    if((input$q-input$skip)>6 & nchar(input$userid)>3) 
+      "You are now eligible for payment if your Worker ID is correct and you accepted the HIT on Amazon" 
+    else if((input$q-input$skip)>6) 
+      "Please input your Worker ID to receive payment through Amazon Turk." 
+    else " "
+  })
 
 
 })  

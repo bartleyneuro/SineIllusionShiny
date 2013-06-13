@@ -23,15 +23,21 @@ Shiny.inputBindings.register(inputSpinnerBinding);
 
 function textlower() {
   el = $("#spinner .spinnernumber");
-  newval = Math.min(1, Math.max(0, (parseFloat(el.val())-1/20).toFixed(2)));
+  newval = Math.min(46, Math.max(1, (parseInt(el.val())-1)));
   $(el).attr("value", newval);
   el.trigger("change");
 }
 
-
 function textraise() {
   el = $("#spinner .spinnernumber");
-  newval = Math.min(1, Math.max(0, (parseFloat(el.val())+1/20).toFixed(2)));
+  newval = Math.min(46, Math.max(1, (parseInt(el.val())+1)));
+  $(el).attr("value", newval);
+  el.trigger("change");
+}
+
+function textreset() {
+  el = $("#spinner .spinnernumber");
+  newval = $("#spinner .spinnerorig").val();
   $(el).attr("value", newval);
   el.trigger("change");
 }
