@@ -6,16 +6,16 @@ library(RMySQL)
 con <- dbConnect(MySQL(), group="stat")
 
 
-tab <- dbReadTable(con, name="SineIllusionShiny")
+# tab <- dbReadTable(con, name="SineIllusionShiny")
 
 # # Re-initialize table...
-dbRemoveTable(con, name="SineIllusionShiny")
+# dbRemoveTable(con, name="SineIllusionShiny")
 # load("df.Rdata")
 # df <- cd2
 # df <- df[,c("allowDataUriScheme", "fingerprint", "userid", "ipid", "output_illusion_height", "output_illusion_width", "pixelratio", "q", "skip", "time", "url_hostname", "url_pathname", "url_port", "url_protocol", "url_search", "weight", "iphash")]
 # df$time <- as.POSIXct(df$time)
 
-dbWriteTable(con, name="SineIllusionShiny", value=tab, field.types=list(
+dbWriteTable(con, name="SineIllusionShiny", value=df, field.types=list(
   allowDataUriScheme = "boolean",
   fingerprint = "varchar(35)",
   userid = "text",
