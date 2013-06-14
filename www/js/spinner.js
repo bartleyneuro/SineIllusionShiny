@@ -23,14 +23,14 @@ Shiny.inputBindings.register(inputSpinnerBinding);
 
 function textlower() {
   el = $("#spinner .spinnernumber");
-  newval = Math.min(46, Math.max(1, (parseInt(el.val())-1)));
+  newval = Math.min(52, Math.max(1, (parseInt(el.val())-1)));
   $(el).attr("value", newval);
   el.trigger("change");
 }
 
 function textraise() {
   el = $("#spinner .spinnernumber");
-  newval = Math.min(46, Math.max(1, (parseInt(el.val())+1)));
+  newval = Math.min(52, Math.max(1, (parseInt(el.val())+1)));
   $(el).attr("value", newval);
   el.trigger("change");
 }
