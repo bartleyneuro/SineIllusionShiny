@@ -3,7 +3,7 @@ inputSpinner <- function(inputId, value = 0) {
   if(length(value)<1) value = 0
   tagList(
     singleton(tags$head(tags$script(src = "js/spinner.js"))),
-    tags$p("Please adjust the value below until you feel the lines are (approximately) the same size and are as evenly spaced as possible."),
+    tags$p("Please adjust the value below until you feel the lines are (approximately) the same size."),
     tags$p(id="spinner", tags$input(class="spinnernumber",
                                     type="text",
                                     id=inputId,
