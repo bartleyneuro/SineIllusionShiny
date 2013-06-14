@@ -39,10 +39,12 @@ shinyUI(pageWithSidebar(
   headerPanel("Graphical Cognition"),
   
   sidebarPanel(
-    uiOutput("weightControl"),
-    actionButton("q", "Finished"), 
-    span(" ", style="display:inline-block;margin-left:39%"),
-    actionButton("skip", "Skip Question"),
+    conditionalPanel(condition = "input.q<30",
+      uiOutput("weightControl"),
+      actionButton("q", "Finished"), 
+      span(" ", style="display:inline-block;margin-left:39%"),
+      actionButton("skip", "Skip Question")
+    ),
     br(),br(),
     textOutput("questionCounter1"),
     textOutput("questionCounter2"),
@@ -52,7 +54,7 @@ shinyUI(pageWithSidebar(
     textInput("userid", "Amazon Worker ID"), 
     helpText("Only necessary for payment through Amazon Turk."),
     br(),
-    tagList(p(tags$small("This experiment is IRB exempt ", a(href = "https://dl.dropboxusercontent.com/u/5756914/IRBForm.pdf", "(More Information)")))
+    tagList(p(tags$small("This experiment is IRB exempt ", a(href = "https://dl.dropboxusercontent.com/u/5756914/IRBForm.pdf", "(More Information)"))))
   ),
   mainPanel(
 #     textOutput("testtext"),

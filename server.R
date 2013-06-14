@@ -52,27 +52,25 @@ shinyServer(function(input, output, session) {
             }  
           })
   
-  observe({
-    (input$q+input$skip+input$reset) # make the observe() function depend on those values
-    isolate({
-      output$weightControl <- renderUI({
-        inputSpinner("weight", value=trials$z[q()])
-      })
-    })
+  output$weightControl <- renderUI({
+    (input$q+input$skip+input$reset)
+    inputSpinner("weight", value=trials$z[q()])
   })
 
-  
   output$illusion <- renderPlot({
-
-    dframe.all <- subset(dframe, type==trials$type[q()] & w==wt())
-    p1 <- qplot(x=xstart, xend=xend, y=ystart, yend=yend, geom="segment", data=dframe.all) + 
-      coord_equal(ratio=1) +
-      theme_stimuli() + xlim(c(-pi, pi))  
-    
+    if(input$q<=30){
+      dframe.all <- subset(dframe, type==trials$type[q()] & w==wt())
+      p1 <- qplot(x=xstart, xend=xend, y=ystart, yend=yend, geom="segment", data=dframe.all) + 
+        coord_equal(ratio=1) +
+        theme_stimuli() + xlim(c(-pi, pi))  
+    }else{
+      p1 <- qplot(x=0, y=0, geom="text", label="Thank you for participating!", size=I(15)) + theme_stimuli()
+    }      
     print(p1)
   })
 
   output$testtext <- renderText(paste("weight: ", wt(), 
+                                      "     type: ", trials$type[q()],
                                       "     reset: ", input$reset,
                                       "     q: ", input$q,
                                       "     skip: ", input$skip
