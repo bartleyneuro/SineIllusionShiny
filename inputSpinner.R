@@ -35,7 +35,7 @@ inputSpinner <- function(inputId, value = 0) {
                                                onclick="textreset();"))
                           )),style="width:60%;  margin:0 auto;")
       ),
-    tags$p("When you are satisfied, press the \"Finished\" button for another question. This task should not take more than a minute to complete.")
+    tags$p("When you are satisfied, press the \"Finished\" button for another question. Each question should take less than a minute to complete.")
   )
 }
 
