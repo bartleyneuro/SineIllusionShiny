@@ -2,7 +2,7 @@ library(shiny)
 library(ggplot2)
 library(reshape2)
 library(plyr)
-# library(shinyIncubator)
+library(shinyIncubator)
 library(RMySQL)
 library(digest)
 
@@ -11,7 +11,7 @@ source("./inputSpinner.R")
 #' Look at https://groups.google.com/forum/?fromgroups=#!topic/shiny-discuss/THb1Ql5E20s 
 #' for shiny server user-level data collection
 
-shinyServer(function(input, output, session) {
+shinyServer(function(input, output, clientData) {
 
   suppressMessages(library(ggplot2))
 
@@ -82,7 +82,7 @@ shinyServer(function(input, output, session) {
   output$data <- renderPrint({
     invisible({
 
-    cd <- reactiveValuesToList(session$clientData)
+    cd <- reactiveValuesToList(clientData)
     cd1 <- reactiveValuesToList(input)
     both <- list(cd, cd1)
     n <- unique(unlist(lapply(both, names)))
