@@ -3,7 +3,7 @@ inputSpinner <- function(inputId, value = 0) {
   if(length(value)<1) value = 0
   tagList(
     singleton(tags$head(tags$script(src = "js/spinner.js"))),
-    tags$p("Please adjust the value below until you feel the lines are (approximately) the same size."),
+    tags$p("Please adjust the value below until you feel the lines are (approximately) the same size. No visual aid or ruler should be necessary."),
     tags$p(id="spinner", tags$input(class="spinnernumber",
                                     type="text",
                                     id=inputId,
@@ -35,7 +35,7 @@ inputSpinner <- function(inputId, value = 0) {
                                                onclick="textreset();"))
                           )),style="width:60%;  margin:0 auto;")
       ),
-    tags$p("When you are satisfied, press the \"Finished\" button for another question.")
+    tags$p("When you are satisfied, press the \"Finished\" button for another question. This task should not take more than a minute to complete.")
   )
 }
 
