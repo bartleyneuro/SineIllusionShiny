@@ -40,4 +40,5 @@ library(grid)
 qplot(data=subset(data, len>1), x=wopts[startweight], xend=wopts[endweight], y=interaction(fingerprint, q+skip), yend=interaction(fingerprint, q+skip), geom="segment", arrow=arrow(length = unit(0.1,"cm")))
 
 
-qplot(data=subset(tab2, len>2 & seq>1 & ntrials>1 & trial.time>-500), x=trial.time, y=wopts[weight], group=q+skip, geom="line", colour=factor((q+skip)%%6)) + geom_point(aes(x=0, y=wopts[end.weight])) + facet_grid(type~fingerprint, scales="free_x") + xlab("Time until Trial End") + ylab("Weight") + geom_hline(yintercept=1) + geom_hline(yintercept=0)
+write.csv(tab2, "SummaryTable")
+qplot(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-500), x=trial.time, y=wopts[weight], group=q+skip, geom="line", colour=factor((q+skip)%%6)) + geom_point(aes(x=0, y=wopts[end.weight])) + facet_grid(type~fingerprint, scales="free_x") + xlab("Time until Trial End") + ylab("Weight") + geom_hline(yintercept=1) + geom_hline(yintercept=0)
