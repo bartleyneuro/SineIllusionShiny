@@ -41,4 +41,7 @@ qplot(data=subset(data, len>1), x=wopts[startweight], xend=wopts[endweight], y=i
 
 
 write.csv(tab2, "SummaryTable")
+
+tab2 <- read.csv("SummaryTable", row.names=1, stringsAsFactors=FALSE)
+tab2$time2 <- ymd_hms(tab2$time2)
 qplot(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-500), x=trial.time, y=wopts[weight], group=q+skip, geom="line", colour=factor((q+skip)%%6)) + geom_point(aes(x=0, y=wopts[end.weight])) + facet_grid(type~fingerprint, scales="free_x") + xlab("Time until Trial End") + ylab("Weight") + geom_hline(yintercept=1) + geom_hline(yintercept=0)
