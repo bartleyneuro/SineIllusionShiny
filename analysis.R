@@ -40,8 +40,32 @@ library(grid)
 qplot(data=subset(data, len>1), x=wopts[startweight], xend=wopts[endweight], y=interaction(fingerprint, q+skip), yend=interaction(fingerprint, q+skip), geom="segment", arrow=arrow(length = unit(0.1,"cm")))
 
 
-write.csv(tab2, "SummaryTable")
+write.csv(tab2, "IndivTrajectory.csv")
+write.csv(data, "SummaryTable.csv")
 
-tab2 <- read.csv("SummaryTable", row.names=1, stringsAsFactors=FALSE)
+data <- read.csv("SummaryTable.csv", row.names=1, stringsAsFactors=FALSE)
+tab2 <- read.csv("IndivTrajectory.csv", row.names=1, stringsAsFactors=FALSE)
+
 tab2$time2 <- ymd_hms(tab2$time2)
 qplot(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-500), x=trial.time, y=wopts[weight], group=q+skip, geom="line", colour=factor((q+skip)%%6)) + geom_point(aes(x=0, y=wopts[end.weight])) + facet_grid(type~fingerprint, scales="free_x") + xlab("Time until Trial End") + ylab("Weight") + geom_hline(yintercept=1) + geom_hline(yintercept=0)
+
+ggplot() + 
+  geom_point(data=data, aes(x=0, y=wopts[endweight], colour=fingerprint), alpha=.2) + 
+  geom_rug(data=data, aes(y=wopts[endweight]), alpha=.2, sides="r") +
+  geom_line(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-100),
+            aes(x=trial.time, y=wopts[weight], group=q+skip, colour=fingerprint), alpha=.3) + 
+  facet_grid(type~., scales="free_x") + 
+  xlab("Time until Trial End") + 
+  ylab("Weight") + 
+  geom_hline(yintercept=1) + 
+  geom_hline(yintercept=0)
+
+data$startweight.cat <- factor(
+  sapply(wopts[data$startweight], function(i) sum(i<=quantile(wopts[data$startweight], seq(.2, 1, .2)))),
+  labels=paste(quantile(wopts[data$startweight], seq(0, .8, .2)), quantile(wopts[data$startweight], seq(.2, 1, .2)), sep=" - "))
+
+ggplot() + geom_density(data=data, aes(x=wopts[endweight], group=startweight.cat,
+                                       colour=startweight.cat, fill=startweight.cat), alpha=I(.2)) + 
+  facet_wrap(~type) + scale_fill_discrete("Starting Weight") + 
+  scale_colour_discrete("Starting Weight") + 
+  xlab("Final Weight") + ylab("Density") + ggtitle("Density of Final Weight")
