@@ -1,4 +1,5 @@
 library(RMySQL)
+ 
 
 con <- dbConnect(MySQL(), group="stat")
 tab <- dbReadTable(con, name="SineIllusionShiny")[-1,]
