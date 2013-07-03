@@ -1,4 +1,5 @@
 library(RMySQL)
+ 
 
 con <- dbConnect(MySQL(), group="stat")
 tab <- dbReadTable(con, name="SineIllusionShiny")[-1,]
@@ -37,7 +38,11 @@ tab2 <- ddply(tab, .(iphash, fingerprint, ipid, q, skip, type, ntrials), transfo
 
 library(ggplot2)
 library(grid)
-qplot(data=subset(data, len>1), x=wopts[startweight], xend=wopts[endweight], y=interaction(fingerprint, q+skip), yend=interaction(fingerprint, q+skip), geom="segment", arrow=arrow(length = unit(0.1,"cm")))
+qplot(data=subset(data, len>1), 
+      x=wopts[startweight], xend=wopts[endweight], 
+      y=interaction(fingerprint), yend=interaction(fingerprint), geom="segment", 
+      arrow=arrow(length = unit(0.1,"cm")), group=q+skip, alpha=I(.2)) + 
+  facet_wrap(~type)
 
 
 write.csv(tab2, "IndivTrajectory.csv")
@@ -68,4 +73,4 @@ ggplot() + geom_density(data=data, aes(x=wopts[endweight], group=startweight.cat
                                        colour=startweight.cat, fill=startweight.cat), alpha=I(.2)) + 
   facet_wrap(~type) + scale_fill_discrete("Starting Weight") + 
   scale_colour_discrete("Starting Weight") + 
-  xlab("Final Weight") + ylab("Density") + ggtitle("Density of Final Weight")
+  xlab("Final Weight") + ylab("Density") + ggtitle("Density of Final Weight") + xlim(c(0,1))
