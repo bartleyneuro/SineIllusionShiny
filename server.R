@@ -2,7 +2,7 @@ library(shiny)
 library(ggplot2)
 library(reshape2)
 library(plyr)
-library(shinyIncubator)
+# library(shinyIncubator)
 library(RMySQL)
 library(digest)
 
@@ -11,37 +11,11 @@ source("./inputSpinner.R")
 #' Look at https://groups.google.com/forum/?fromgroups=#!topic/shiny-discuss/THb1Ql5E20s 
 #' for shiny server user-level data collection
 
+
+#' If date is greater than 7.21.2013 at 12pm, then omit 1st 2 trials. 
 shinyServer(function(input, output, clientData) {
-
   suppressMessages(library(ggplot2))
-
-  diffs <- c(0, .5, .5, .5, .5, .25, .25, .25, .25, .25, .25, .25, .25, .1, .1, .05, .05, .05, .05, .05, .05, .025, .025, .025, .025, .025, .025, .025, .025, .025, .025, .025, .025, .05, .05, .05, .05, .1, .1, .1, .1, .1, .25, .25, .25, .25, .25, .25, .5, .5, .5, .5)
-  wopts <- -4 +cumsum(diffs)
-  
-  # make list of all combinations of w, type, with corresponding index to reference list of dataframes.
-  dframelist <- expand.grid(z=1:length(wopts), type=c("x", "y"), stringsAsFactors=FALSE)
-  dframelist$idx <- 1:nrow(dframelist)
-  dframelist$w <- wopts[dframelist$z]
-  
-  reqtrials <- 6
-  trialsreq <- expand.grid(z=c(13, sample(16:26, 1), 31), type=c("x", "y"))
-  # sample the middle weight option, then 0, 1. Combine with each combination of x, y.
-  trialsreq <- trialsreq[sample(1:reqtrials, reqtrials),] # shuffle
-  
-  trialsextra <- expand.grid(z=13:31, type=c("x", "y"))
-  trialsextra <- trialsextra[sample(1:(length(trialsextra$z)), length(trialsextra$z)),]
-  # leave repeats in to get a measure of reliability
-  trials <- rbind(trialsreq, trialsextra)
-  trials$order <- 1:nrow(trials)
-  trials$w <- wopts[trials$z]
-  trials$w <- ceiling(trials$w/.05)*.05
-  trials <- merge(trials, dframelist)
-  trials <- trials[order(trials$order),-4]
-  
-  maxtrials <- nrow(trials)
-  
-  dframe <- do.call("rbind", lapply(dframelist$idx, function(i) getData.wtype(dframelist$w[i], dframelist$type[i])))
-  dframe <- merge(dframe, dframelist, sort=FALSE)
+  source("userSetup.R")
 
   q <- reactive((input$q+input$skip) %% maxtrials + 1)
   wt <- reactive({
@@ -58,7 +32,19 @@ shinyServer(function(input, output, clientData) {
   })
 
   output$illusion <- renderPlot({
-    if(input$q<=30){
+    if(input$q==0){ # Initial trial of y-axis
+      dframe.all <- subset(dframe, type=="y" & w==wt())
+      p1 <- qplot(x=xstart, xend=xend, y=ystart, yend=yend, geom="segment", data=dframe.all) + 
+        geom_line(aes(x=x, y=y), data=dframe.all, colour=I("grey60")) +
+        coord_equal(ratio=1) +
+        theme_stimuli() + xlim(c(-pi, pi))  
+    } else if(input$q==1){ # Initial trial of x-axis
+        dframe.all <- subset(dframe, type=="x" & w==wt())
+        p1 <- qplot(x=xstart, xend=xend, y=ystart, yend=yend, geom="segment", data=dframe.all) + 
+          geom_line(aes(x=x, y=y), data=dframe.all, colour=I("grey75")) +
+          coord_equal(ratio=1) +
+          theme_stimuli() + xlim(c(-pi, pi))  
+    } else if(input$q<=32){
       dframe.all <- subset(dframe, type==trials$type[q()] & w==wt())
       p1 <- qplot(x=xstart, xend=xend, y=ystart, yend=yend, geom="segment", data=dframe.all) + 
         coord_equal(ratio=1) +
@@ -123,10 +109,20 @@ shinyServer(function(input, output, clientData) {
   })
 
   output$getsPaid <- renderText({
-    if((input$q-input$skip)>6 & nchar(input$userid)>3) 
-      "You are now eligible for payment if your Worker ID is correct and you accepted the HIT on Amazon" 
-    else if((input$q-input$skip)>6) 
-      "Please input your Worker ID to receive payment through Amazon Turk." 
+    if((input$q-input$skip)>reqtrials & nchar(input$userid)>3) 
+      "You are now eligible for payment if your Worker ID is correct and you accepted the HIT on Amazon. You may continue adjusting these figures if you wish - it will help us estimate the effect more precisely. " 
+    else if((input$q-input$skip)>reqtrials) 
+      "Please input your Worker ID if you wish to receive payment through Amazon Turk. You may continue adjusting these figures if you wish - it will help us estimate the effect more precisely. " 
+    else " "
+  })
+  
+  output$helpText <- renderText({
+    if(input$q == 0) "Adjust the image until the line segments appear to be equal. Use the grey line to help you this time."
+    else if(input$q == 1) "Adjust the image until the line segments appear to be equal and approximately follow the grey line. The grey line is here to help you this time, but will not be present in future trials."
+    else if((input$q-input$skip)>reqtrials & nchar(input$userid)>3) 
+      "You are now eligible for payment if your Worker ID is correct and you accepted the HIT on Amazon.You may continue adjusting these figures if you wish - it will help us estimate the effect more precisely. " 
+    else if((input$q-input$skip)>reqtrials) 
+      "Please input your Worker ID to receive payment through Amazon Turk.  You may continue adjusting these figures if you wish - it will help us estimate the effect more precisely. " 
     else " "
   })
 

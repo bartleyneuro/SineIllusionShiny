@@ -1,5 +1,5 @@
 library(shiny)
-library(shinyIncubator)
+# library(shinyIncubator)
 
 inputUserid <- function(inputId, value='') {
 #   print(paste(inputId, "=", value))
@@ -59,6 +59,7 @@ shinyUI(pageWithSidebar(
   mainPanel(
 #     textOutput("testtext"),
     plotOutput("illusion", width="auto"),
+    textOutput("helpText"),
     textOutput("data")
   )
 ))

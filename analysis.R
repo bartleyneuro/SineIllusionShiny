@@ -16,20 +16,22 @@ library(plyr)
 library(lubridate)
 tab$time2 <- ymd_hms(tab$time)
 tab <- ddply(tab, .(iphash, fingerprint, ipid), transform, ntrials=length(unique(q+skip)))
+tab <- tab[which(tab$weight>0),]
 data <- ddply(tab, .(iphash, fingerprint, ipid, q, skip, type, ntrials), 
               function(df){
                 with(df, 
-                data.frame(startweight = weight[which.min(time2)], 
-                           endweight = weight[which.max(time2)], 
-                           modeweight = Mode(weight), 
+                data.frame(startweight = wopts[weight[which.min(time2)]], 
+                           endweight =  wopts[weight[which.max(time2)]], 
+                           modeweight =  wopts[Mode(weight)], 
                            len = length(weight), 
                            unique.weights = length(unique(weight)),
                            time.trial = max(time2)-min(time2)))
               })
 
 tab2 <- ddply(tab, .(iphash, fingerprint, ipid, q, skip, type, ntrials), transform,
-              start.weight = rep(weight[which.min(time2)],length(time2)), 
-              end.weight = rep(weight[which.max(time2)],length(time2)),
+              weight = wopts[weight],
+              start.weight = wopts[rep(weight[which.min(time2)],length(time2))], 
+              end.weight = wopts[rep(weight[which.max(time2)],length(time2))],
               time.diff = as.numeric(c(0, diff(time2))),
               end.time = rep(min(time2)-max(time2),length(time2)),
               len = rep(length(time2),length(time2)),
@@ -39,7 +41,7 @@ tab2 <- ddply(tab, .(iphash, fingerprint, ipid, q, skip, type, ntrials), transfo
 library(ggplot2)
 library(grid)
 qplot(data=subset(data, len>1), 
-      x=wopts[startweight], xend=wopts[endweight], 
+      x=startweight, xend=endweight, 
       y=interaction(fingerprint), yend=interaction(fingerprint), geom="segment", 
       arrow=arrow(length = unit(0.1,"cm")), group=q+skip, alpha=I(.2)) + 
   facet_wrap(~type)
@@ -52,13 +54,14 @@ data <- read.csv("SummaryTable.csv", row.names=1, stringsAsFactors=FALSE)
 tab2 <- read.csv("IndivTrajectory.csv", row.names=1, stringsAsFactors=FALSE)
 
 tab2$time2 <- ymd_hms(tab2$time2)
-qplot(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-500), x=trial.time, y=wopts[weight], group=q+skip, geom="line", colour=factor((q+skip)%%6)) + geom_point(aes(x=0, y=wopts[end.weight])) + facet_grid(type~fingerprint, scales="free_x") + xlab("Time until Trial End") + ylab("Weight") + geom_hline(yintercept=1) + geom_hline(yintercept=0)
+qplot(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-500), x=trial.time, y=weight, group=q+skip, geom="line", colour=factor((q+skip)%%6)) + geom_point(aes(x=0, y=end.weight)) + facet_grid(type~fingerprint, scales="free_x") + xlab("Time until Trial End") + ylab("Weight") + geom_hline(yintercept=1) + geom_hline(yintercept=0)
 
 ggplot() + 
-  geom_point(data=data, aes(x=0, y=wopts[endweight], colour=fingerprint), alpha=.2) + 
-  geom_rug(data=data, aes(y=wopts[endweight]), alpha=.2, sides="r") +
+  geom_point(data=data, aes(x=0, y=endweight, colour=fingerprint), alpha=.2) + 
+  geom_rug(data=data, aes(y=endweight), alpha=.1, sides="r") +
   geom_line(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-100),
-            aes(x=trial.time, y=wopts[weight], group=q+skip, colour=fingerprint), alpha=.3) + 
+            aes(x=trial.time, y=weight, group=interaction(q+skip, fingerprint), 
+                colour=fingerprint), alpha=.3) + 
   facet_grid(type~., scales="free_x") + 
   xlab("Time until Trial End") + 
   ylab("Weight") + 
@@ -66,11 +69,14 @@ ggplot() +
   geom_hline(yintercept=0)
 
 data$startweight.cat <- factor(
-  sapply(wopts[data$startweight], function(i) sum(i<=quantile(wopts[data$startweight], seq(.2, 1, .2)))),
-  labels=paste(quantile(wopts[data$startweight], seq(0, .8, .2)), quantile(wopts[data$startweight], seq(.2, 1, .2)), sep=" - "))
+  sapply(data$startweight, function(i) sum(i<=quantile(data$startweight, seq(.2, 1, .2)))),
+  labels=paste(quantile(data$startweight, seq(0, .8, .2)), quantile(data$startweight, seq(.2, 1, .2)), sep=" - "))
 
-ggplot() + geom_density(data=data, aes(x=wopts[endweight], group=startweight.cat,
+ggplot() + geom_density(data=data, aes(x=endweight, group=startweight.cat,
                                        colour=startweight.cat, fill=startweight.cat), alpha=I(.2)) + 
-  facet_wrap(~type) + scale_fill_discrete("Starting Weight") + 
+  geom_rug(data=data, aes(x=endweight), alpha=I(.1)) + 
+  facet_grid(startweight.cat~type) + scale_fill_discrete("Starting Weight") + 
   scale_colour_discrete("Starting Weight") + 
-  xlab("Final Weight") + ylab("Density") + ggtitle("Density of Final Weight") + xlim(c(0,1))
+  xlab("Final Weight") + ylab("Density") + ggtitle("Density of Final Weight") + xlim(c(-.5, 1.5))
+
+ggplot() + geom_text(data=data, aes(x=startweight, y=endweight, label=as.numeric(factor(fingerprint))), alpha=.1) + facet_wrap(~type) + xlim(c(-.25, 1.25)) + ylim(c(-.25, 1.25))
