@@ -110,4 +110,7 @@ freegeoip <- function(ip, format = ifelse(length(ip)==1,'list','dataframe'))
   }
 }   
 
-geodata <- freegeoip(unique(tab2$ipid))
+geodata <- freegeoip(paste(unique(tab2$ipid), ".0", sep=""))
+
+table(geodata$country_name)
+table(paste(geodata$city, geodata$region_name, sep=","))
