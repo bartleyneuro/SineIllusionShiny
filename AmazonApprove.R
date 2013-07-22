@@ -1,7 +1,7 @@
 library(RMySQL)
 con <- dbConnect(MySQL(), group="stat")
 tab <- dbReadTable(con, name="SineIllusionShiny")[-1,]
-
+dbDisconnect(con)
 Mode <- function(x) {
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
@@ -23,5 +23,6 @@ amazonusers <- ddply(tab[amazonuseridx,], .(userid, fingerprint, ipid, iphash), 
 amazonusers$userid <- gsub("^ ", "", gsub(" $", "", amazonusers$userid))
 
 
-amazonusers$approve <- c("no", "yes")[1+as.numeric(amazonusers$ntrials>=1)]
+amazonusers$approve <- c("no", "yes")[1+as.numeric(amazonusers$ntrials>=12)]
+amazonusers[,c(1, 5, 6, 7)]
 ips <- ddply(tab[amazonuseridx,], .(iphash, fingerprint), summarise, userid=unique(userid))
