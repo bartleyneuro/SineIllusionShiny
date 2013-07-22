@@ -49,7 +49,7 @@ qplot(data=subset(data, len>1),
 
 
 write.csv(tab2[,-which(names(tab2)=="userid")], "IndivTrajectory.csv")
-write.csv(data[,-which(names(data)=="userid")], "SummaryTable.csv")
+write.csv(data, "SummaryTable.csv")
 
 data <- read.csv("SummaryTable.csv", row.names=1, stringsAsFactors=FALSE)
 tab2 <- read.csv("IndivTrajectory.csv", row.names=1, stringsAsFactors=FALSE)
@@ -85,3 +85,29 @@ ggplot() + geom_density(data=data, aes(x=endweight, group=startweight.cat,
   xlab("Final Weight") + ylab("Density") + ggtitle("Density of Final Weight") + xlim(c(-.5, 1.5))
 
 ggplot() + geom_text(data=data, aes(x=startweight, y=endweight, label=as.numeric(factor(fingerprint))), alpha=.1) + facet_wrap(~type) + xlim(c(-.25, 1.25)) + ylim(c(-.25, 1.25))
+
+library(rjson)
+
+freegeoip <- function(ip, format = ifelse(length(ip)==1,'list','dataframe'))
+{
+  if (1 == length(ip))
+  {
+    # a single IP address
+    require(rjson)
+    url <- paste(c("http://freegeoip.net/json/", ip), collapse='')
+    ret <- fromJSON(readLines(url, warn=FALSE))
+    if (format == 'dataframe')
+      ret <- data.frame(t(unlist(ret)))
+    return(ret)
+  } else {
+    ret <- data.frame()
+    for (i in 1:length(ip))
+    {
+      r <- freegeoip(ip[i], format="dataframe")
+      ret <- rbind(ret, r)
+    }
+    return(ret)
+  }
+}   
+
+geodata <- freegeoip(unique(tab2$ipid))
