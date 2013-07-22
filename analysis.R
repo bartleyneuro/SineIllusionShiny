@@ -89,7 +89,9 @@ probs <- ddply(data, .(startweight), summarise, plt80 = sum(endweight<.8)/length
 
 qplot(data=probs, geom="smooth", x=startweight, y=avg) + geom_point(alpha=.1)
 qplot(data=data, geom="smooth", x=startweight, y=endweight) + geom_point(alpha=.01) + ylim(c(-.25, 1.25))
-qplot(data=subset(data, ntrials>15), geom="smooth", x=startweight, y=endweight)+ facet_wrap(~fingerid) + geom_point(alpha=.1) + ylim(c(-.25, 1.25)) + xlim(c(-.25, 1.25))
+qplot(data=subset(data, ntrials>15), geom="smooth", x=startweight, y=endweight, colour=type)+ facet_wrap(~fingerid) + geom_point(alpha=.2) + ylim(c(-.25, 1.25)) + xlim(c(-.25, 1.25))
+
+qplot(data=subset(data, ntrials>10), geom="boxplot", x=factor(fingerid), y=endweight) + facet_wrap(~type) + ylim(c(-1, 2)) + ggtitle("Individual boxplots")
 
 library(lme4)
 model <- lmer(data=data, endweight~startweight+type+(1|fingerid))
