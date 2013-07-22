@@ -13,8 +13,6 @@ tab$userid <- gsub("^ ", "", gsub(" $", "", tab$userid)) # strip leading/trailin
 amazonuseridx <- which(nchar(tab$userid)>=12)
 
 amazonusers <- ddply(tab[amazonuseridx,], .(userid, fingerprint, ipid, iphash), summarise, ntrials=max(q)+1, skips = max(skip))
-amazonusers$userid <- gsub("^ ", "", gsub(" $", "", amazonusers$userid))
-
 
 amazonusers$approve <- c("no", "yes")[1+as.numeric(amazonusers$ntrials>=12)]
 amazonusers[,c(1, 5, 6, 7)]
