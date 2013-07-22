@@ -1,9 +1,8 @@
 library(RMySQL)
- 
 
 con <- dbConnect(MySQL(), group="stat")
 tab <- dbReadTable(con, name="SineIllusionShiny")[-1,]
-
+dbDisconnect(con)
 Mode <- function(x) {
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
@@ -42,13 +41,15 @@ library(ggplot2)
 library(grid)
 qplot(data=subset(data, len>1), 
       x=startweight, xend=endweight, 
-      y=interaction(fingerprint), yend=interaction(fingerprint), geom="segment", 
+      y=fingerprint, yend=fingerprint, geom="segment", 
       arrow=arrow(length = unit(0.1,"cm")), group=q+skip, alpha=I(.2)) + 
+  geom_vline(aes(xintercept=0), linetype=2) +
+  geom_vline(aes(xintercept=1), linetype=2) +
   facet_wrap(~type)
 
 
-write.csv(tab2, "IndivTrajectory.csv")
-write.csv(data, "SummaryTable.csv")
+write.csv(tab2[,-which(names(tab2)=="userid")], "IndivTrajectory.csv")
+write.csv(data[,-which(names(data)=="userid")], "SummaryTable.csv")
 
 data <- read.csv("SummaryTable.csv", row.names=1, stringsAsFactors=FALSE)
 tab2 <- read.csv("IndivTrajectory.csv", row.names=1, stringsAsFactors=FALSE)
@@ -56,17 +57,21 @@ tab2 <- read.csv("IndivTrajectory.csv", row.names=1, stringsAsFactors=FALSE)
 tab2$time2 <- ymd_hms(tab2$time2)
 qplot(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-500), x=trial.time, y=weight, group=q+skip, geom="line", colour=factor((q+skip)%%6)) + geom_point(aes(x=0, y=end.weight)) + facet_grid(type~fingerprint, scales="free_x") + xlab("Time until Trial End") + ylab("Weight") + geom_hline(yintercept=1) + geom_hline(yintercept=0)
 
+data$fingerid <- as.numeric(factor(data$fingerprint))
+tab2$fingerid <- as.numeric(factor(tab2$fingerprint))
 ggplot() + 
-  geom_point(data=data, aes(x=0, y=endweight, colour=fingerprint), alpha=.2) + 
-  geom_rug(data=data, aes(y=endweight), alpha=.1, sides="r") +
+  geom_point(data=data, aes(x=0, y=endweight), alpha=.05) + 
+  geom_rug(data=data, aes(y=endweight), alpha=.05, sides="r") +
   geom_line(data=subset(tab2, len>2 & seq>1 & ntrials>3 & trial.time>-100),
-            aes(x=trial.time, y=weight, group=interaction(q+skip, fingerprint), 
-                colour=fingerprint), alpha=.3) + 
+            aes(x=trial.time, y=weight, group=interaction(q+skip, fingerprint)), alpha=.1) + 
   facet_grid(type~., scales="free_x") + 
   xlab("Time until Trial End") + 
   ylab("Weight") + 
   geom_hline(yintercept=1) + 
-  geom_hline(yintercept=0)
+  geom_hline(yintercept=0) +
+  xlim(c(-25, 1)) + 
+  ylim(c(-1, 2))
+
 
 data$startweight.cat <- factor(
   sapply(data$startweight, function(i) sum(i<=quantile(data$startweight, seq(.2, 1, .2)))),
