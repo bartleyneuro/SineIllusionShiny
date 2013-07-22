@@ -2,13 +2,6 @@ library(RMySQL)
 con <- dbConnect(MySQL(), group="stat")
 tab <- dbReadTable(con, name="SineIllusionShiny")[-1,]
 dbDisconnect(con)
-Mode <- function(x) {
-  ux <- unique(x)
-  ux[which.max(tabulate(match(x, ux)))]
-}
-
-diffs <- c(0, .5, .5, .5, .5, .25, .25, .25, .25, .25, .25, .25, .25, .1, .1, .05, .05, .05, .05, .05, .05, .025, .025, .025, .025, .025, .025, .025, .025, .025, .025, .025, .025, .05, .05, .05, .05, .1, .1, .1, .1, .1, .25, .25, .25, .25, .25, .25, .5, .5, .5, .5)
-wopts <- -4 +cumsum(diffs)
 
 library(plyr)
 library(lubridate)
