@@ -99,7 +99,8 @@ shinyServer(function(input, output, clientData) {
   })
   
   output$questionCounter1 <- renderText({
-    paste("Questions Answered: ", input$q, sep="")
+    if(input$q<2) paste("Sample Question ", input$q+1, sep="")
+    else paste("Questions Answered: ", max(input$q-2,0), sep="")
   })
   
   output$questionCounter2 <- renderText({
