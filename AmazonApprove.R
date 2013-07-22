@@ -25,5 +25,3 @@ amazonusers$userid <- gsub("^ ", "", gsub(" $", "", amazonusers$userid))
 
 amazonusers$approve <- c("no", "yes")[1+as.numeric(amazonusers$ntrials>=1)]
 ips <- ddply(tab[amazonuseridx,], .(iphash, fingerprint), summarise, userid=unique(userid))
-
-qplot(data=subset(tab, userid=="A2LV5QYHH24OMY"), x=time2, y=weight)
