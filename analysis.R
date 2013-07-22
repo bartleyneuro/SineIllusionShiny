@@ -84,10 +84,15 @@ ggplot() + geom_density(data=data, aes(x=endweight, group=startweight.cat,
   scale_colour_discrete("Starting Weight") + 
   xlab("Final Weight") + ylab("Density") + ggtitle("Density of Final Weight") + xlim(c(-.5, 1.5))
 
-ggplot() + geom_text(data=data, aes(x=startweight, y=endweight, label=as.numeric(factor(fingerprint))), alpha=.1) + facet_wrap(~type) + xlim(c(-.25, 1.25)) + ylim(c(-.25, 1.25))
+
+probs <- ddply(data, .(startweight), summarise, plt80 = sum(endweight<.8)/length(endweight), plt0 = sum(endweight<0)/length(endweight), n = length(endweight), avg = mean(endweight), q95 = quantile(endweight, .95), q05=quantile(endweight, .05))
+
+qplot(data=probs, geom="smooth", x=startweight, y=avg) + geom_point(alpha=.1)
+qplot(data=data, geom="smooth", x=startweight, y=endweight) + geom_point(alpha=.1) + ylim(c(-.25, 1.25))
+library(lme4)
+model <- lmer(data=data, endweight~startweight+type+(1|fingerid))
 
 library(rjson)
-
 freegeoip <- function(ip, format = ifelse(length(ip)==1,'list','dataframe'))
 {
   if (1 == length(ip))
