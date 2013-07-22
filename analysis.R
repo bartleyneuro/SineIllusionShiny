@@ -88,7 +88,9 @@ ggplot() + geom_density(data=data, aes(x=endweight, group=startweight.cat,
 probs <- ddply(data, .(startweight), summarise, plt80 = sum(endweight<.8)/length(endweight), plt0 = sum(endweight<0)/length(endweight), n = length(endweight), avg = mean(endweight), q95 = quantile(endweight, .95), q05=quantile(endweight, .05))
 
 qplot(data=probs, geom="smooth", x=startweight, y=avg) + geom_point(alpha=.1)
-qplot(data=data, geom="smooth", x=startweight, y=endweight) + geom_point(alpha=.1) + ylim(c(-.25, 1.25))
+qplot(data=data, geom="smooth", x=startweight, y=endweight) + geom_point(alpha=.01) + ylim(c(-.25, 1.25))
+qplot(data=subset(data, ntrials>15), geom="smooth", x=startweight, y=endweight)+ facet_wrap(~fingerid) + geom_point(alpha=.1) + ylim(c(-.25, 1.25)) + xlim(c(-.25, 1.25))
+
 library(lme4)
 model <- lmer(data=data, endweight~startweight+type+(1|fingerid))
 
